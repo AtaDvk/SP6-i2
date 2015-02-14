@@ -1,4 +1,8 @@
-package Bleach;
+
+import Bleach.EntityLiving;
+import Bleach.Level;
+import Bleach.LevelInteractable;
+import Bleach.Entity.Sprite;
 
 public class EntityBlob extends EntityLiving {
 
@@ -8,7 +12,7 @@ public class EntityBlob extends EntityLiving {
     }
 
     @Override
-    void AI(LevelInteractable activeLevel) {
+    public void AI(LevelInteractable activeLevel) {
 
 	// BS AI
 	if (System.currentTimeMillis() % 1000 == 0) {
@@ -23,13 +27,13 @@ public class EntityBlob extends EntityLiving {
     }
 
     @Override
-    double dealDamage() {
+    public double dealDamage() {
 	// modifiers?
 	return attackPower;
     }
 
     @Override
-    double takeDamage(double amount) {
+    public double takeDamage(double amount) {
 	health = Math.max(0, health - amount);
 	// animation? sound?
 	return health;

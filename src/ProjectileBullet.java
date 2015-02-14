@@ -1,8 +1,13 @@
-package Bleach;
+
 
 import java.util.ArrayList;
 import java.util.List;
 
+import Bleach.EntityLiving;
+import Bleach.LevelInteractable;
+import Bleach.TerrainBlock;
+import Bleach.Entity.EntityTranslatable;
+import Bleach.Entity.Projectile;
 import Bleach.Loader.Discette;
 import Bleach.PhysicsEngine.CollisionEngine.Impact;
 
@@ -14,7 +19,7 @@ public class ProjectileBullet extends Projectile {
     }
 
     @Override
-    double dealDamage() {
+    public double dealDamage() {
 	/*
 	 * Calculate the amount of damage this projectile does. owner could be
 	 * used to modify the damage (buffs etc)
@@ -37,7 +42,7 @@ public class ProjectileBullet extends Projectile {
 	}
 
 	for (EntityLiving entity : interactors) {
-	    if (entity != this.owner && Impact.collides(this, entity)) {
+	    if (entity != this.getOwner() && Impact.collides(this, entity)) {
 		entity.takeDamage(dealDamage());
 		// sound engine play sound!
 		die(); // This projectile should die now.

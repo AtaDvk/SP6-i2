@@ -1,5 +1,8 @@
 package Bleach;
 
+import Bleach.Entity.Entity;
+import Bleach.Entity.EntityTranslatable;
+import Bleach.Entity.Sprite;
 import Bleach.PhysicsEngine.CollisionEngine.Impact;
 
 public class InventoryItem extends Entity {

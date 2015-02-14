@@ -18,6 +18,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import Bleach.Entity.Entity;
+import Bleach.Entity.EntityTranslatable;
+import Bleach.Entity.Sprite;
 import Bleach.InputManager.Receptionist;
 import Bleach.InputManager.Receptionist.KeyBinding;
 import Bleach.Loader.Discette;
@@ -28,6 +31,9 @@ public class Bleach extends JPanel {
 
     // Singleton pattern
     private static Bleach instance = null;
+
+    // Clock
+    private ClockDude clockDude = new ClockDude();
 
     // Pointer to the active level.
     private Level activeLevel;
@@ -45,15 +51,6 @@ public class Bleach extends JPanel {
 
     private Picasso renderer;
 
-    private long timeDebug;
-
-    // Used for delta-time in the game loop (e.g. FPS limiting)
-    private double timePreviousLoop;
-
-    // Used for delta-time in the rendering (e.g. calculating actual rendering
-    // FPS)
-    private double timePreviousRender;
-
     private int winHeight = 600; // Default height;
     private String winTitle = "Game window"; // Default title;;
     private int winWidth = 800; // Default width;
@@ -61,7 +58,8 @@ public class Bleach extends JPanel {
     private Bleach() {
 	// Let's try to HW-accelerate stuff.
 	System.setProperty("sun.java2d.opengl", "True");
-	this.timePreviousLoop = this.timePreviousRender = System.currentTimeMillis();
+
+	this.clockDude.tickAll();
     }
 
     public static Bleach getInstance() {
@@ -99,10 +97,10 @@ public class Bleach extends JPanel {
 	double deltaTime;
 
 	while (!quit) {
-	    deltaTime = System.currentTimeMillis() - this.timePreviousLoop;
+	    deltaTime = System.currentTimeMillis() - this.clockDude.getTimePreviousLoop();
 
 	    // Simulate work
-	    while (System.currentTimeMillis() - this.timePreviousLoop < 34) {
+	    while (System.currentTimeMillis() - this.clockDude.getTimePreviousLoop() < 34) {
 		Thread.yield();
 	    }
 
@@ -151,7 +149,7 @@ public class Bleach extends JPanel {
 		}
 	    }
 	    paintComponent(this.getGraphics());
-	    this.timePreviousLoop = System.currentTimeMillis();
+	    this.clockDude.tickLoopTime();
 	}
     }
 
@@ -273,23 +271,23 @@ public class Bleach extends JPanel {
 
     @Override
     public void paintComponent(Graphics g) {
-	double deltaTime = System.currentTimeMillis() - this.timePreviousRender;
+	double deltaTime = System.currentTimeMillis() - this.clockDude.getTimePreviousRender();
 
 	if (this.FPS > 0 && deltaTime < 1000.0 / this.FPS)
 	    return;
 
 	double actualFPS = (1000.0 / Math.max(1, (deltaTime)));
 
-	this.timeDebug += deltaTime;
-	if (this.timeDebug >= 1000) {
-	    this.timeDebug = 0;
+	this.clockDude.incDebugTimestamp(deltaTime);
+	if (this.clockDude.getTimeDebug() >= 1000) {
+	    this.clockDude.resetDebugTimestamp();
 	    this.renderer.clearDebugLines();
 	    this.renderer.addDebugLine("FPS: " + (int) actualFPS);
 	}
 
 	this.renderer.render(g, this.activeLevel);
 
-	this.timePreviousRender = System.currentTimeMillis();
+	this.clockDude.tickLastRenderTime();
     }
 
     public void run() {
@@ -310,7 +308,7 @@ public class Bleach extends JPanel {
     /**
      * The game can be paused by many reasons, this is an enumeration of those.
      **/
-    private enum PauseType {
+    public static enum PauseType {
 	// In-game information is displayed (e.g. a splash-screen is displayed,
 	// a book, notepad, messageboard etc is displayed, inventory is
 	// displayed)
@@ -321,5 +319,58 @@ public class Bleach extends JPanel {
 
 	// The user used the pause functionality.
 	USER
+    }
+
+    public static class ClockDude {
+
+	private long timeDebug = 0L;
+
+	/**
+	 * Used for delta-time in the game loop (e.g. FPS limiting)
+	 */
+	private double timePreviousLoop = 0.0;
+
+	/**
+	 * Used for delta-time in the rendering (e.g. calculating actual
+	 * rendering FPS))
+	 */
+	private double timePreviousRender = 0.0;
+
+	public ClockDude() {
+
+	}
+
+	public void resetDebugTimestamp() {
+	    this.timeDebug = 0;
+	}
+
+	public void incDebugTimestamp(double incrementation) {
+	    this.timeDebug += incrementation;
+	}
+
+	public void tickLoopTime() {
+	    this.timePreviousLoop = System.currentTimeMillis();
+	}
+
+	public void tickLastRenderTime() {
+	    this.timePreviousRender = System.currentTimeMillis();
+	}
+
+	public void tickAll() {
+	    this.timePreviousLoop = this.timePreviousRender = System.currentTimeMillis();
+	}
+
+	public long getTimeDebug() {
+	    return this.timeDebug;
+	}
+
+	public double getTimePreviousLoop() {
+	    return this.timePreviousLoop;
+	}
+
+	public double getTimePreviousRender() {
+	    return this.timePreviousRender;
+	}
+
     }
 }

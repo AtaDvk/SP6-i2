@@ -5,6 +5,9 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
+import Bleach.Entity.Entity;
+import Bleach.Entity.EntityTranslatable;
+import Bleach.Entity.Sprite;
 import Bleach.Loader.Discette;
 
 public class Level implements LevelInteractable {
@@ -111,21 +114,24 @@ public class Level implements LevelInteractable {
     public void focusEntity(Entity entity, boolean center) {
 	int padding = 150;
 
+	int entityPosX = (int) entity.getBoundary().getX();
+	int entityPosY = (int) entity.getBoundary().getY();
+
 	if (center) {
-	    this.viewport.x = entity.x;
-	    this.viewport.y = entity.y;
+	    this.viewport.x = entityPosX;
+	    this.viewport.y = entityPosY;
 	} else {
-	    if (entity.x > this.viewport.x - this.screenWidth / 2.0 + this.screenWidth - padding) {
-		this.viewport.x = (int) entity.x - this.screenWidth / 2.0 + padding;
+	    if (entity.getBoundary().getX() > this.viewport.x - this.screenWidth / 2.0 + this.screenWidth - padding) {
+		this.viewport.x = entityPosX - this.screenWidth / 2.0 + padding;
 	    }
-	    if (entity.x < this.viewport.x - this.screenWidth / 2.0 + padding) {
-		this.viewport.x = (int) entity.x + this.screenWidth / 2.0 - padding;
+	    if (entityPosX < this.viewport.x - this.screenWidth / 2.0 + padding) {
+		this.viewport.x = entityPosX + this.screenWidth / 2.0 - padding;
 	    }
-	    if (entity.y > this.viewport.y - this.screenHeight / 2.0 + this.screenHeight - padding) {
-		this.viewport.y = (int) entity.y - this.screenHeight / 2.0 + padding;
+	    if (entityPosY > this.viewport.y - this.screenHeight / 2.0 + this.screenHeight - padding) {
+		this.viewport.y = entityPosY - this.screenHeight / 2.0 + padding;
 	    }
-	    if (entity.y < this.viewport.y - this.screenHeight / 2.0 + padding) {
-		this.viewport.y = (int) entity.y + this.screenHeight / 2.0 - padding;
+	    if (entityPosY < this.viewport.y - this.screenHeight / 2.0 + padding) {
+		this.viewport.y = entityPosY + this.screenHeight / 2.0 - padding;
 	    }
 	}
 

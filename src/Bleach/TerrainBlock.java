@@ -3,6 +3,9 @@ package Bleach;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
+import Bleach.Entity.Entity;
+import Bleach.Entity.Sprite;
+
 public class TerrainBlock extends Entity {
 
     double absPosX, absPosY;

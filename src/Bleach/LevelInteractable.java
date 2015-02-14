@@ -4,6 +4,8 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
+import Bleach.Entity.EntityTranslatable;
+
 public interface LevelInteractable {
     public int getBackgroundParallaxDistance();
 

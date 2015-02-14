@@ -1,4 +1,7 @@
-package Bleach;
+
+import Bleach.EntityLiving;
+import Bleach.LevelInteractable;
+import Bleach.Entity.Sprite;
 
 public class Player extends EntityLiving {
 
@@ -11,17 +14,17 @@ public class Player extends EntityLiving {
     }
 
     @Override
-    void AI(LevelInteractable activeLevel) {
+    public void AI(LevelInteractable activeLevel) {
 	// this could be used for some debuffs like 'confusion', 'fear' etc.
     }
 
     @Override
-    double dealDamage() {
+    public double dealDamage() {
 	return attackPower;
     }
 
     @Override
-    double takeDamage(double amount) {
+    public double takeDamage(double amount) {
 	health = Math.max(0, health - amount);
 	return health;
     }

@@ -1,5 +1,7 @@
 package Bleach;
 
+import Bleach.Entity.Entity;
+import Bleach.Entity.Sprite;
 import Bleach.PhysicsEngine.Force.ExternalForce;
 
 public abstract class EntityLiving extends Entity {
@@ -21,11 +23,12 @@ public abstract class EntityLiving extends Entity {
 	mayJump = true;
     }
 
-    abstract void AI(LevelInteractable activeLevel);
+    public abstract void AI(LevelInteractable activeLevel);
 
-    abstract double dealDamage();
+    public abstract double dealDamage();
 
-    abstract double takeDamage(double amount); // Returns health after damage.
+    public abstract double takeDamage(double amount); // Returns health after
+						      // damage.
 
     public double getDamage() {
 	return attackPower;

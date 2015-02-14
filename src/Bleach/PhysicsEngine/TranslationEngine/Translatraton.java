@@ -3,7 +3,7 @@ package Bleach.PhysicsEngine.TranslationEngine;
 import java.awt.geom.Point2D;
 import java.util.Iterator;
 
-import Bleach.Entity;
+import Bleach.Entity.Entity;
 import Bleach.PhysicsEngine.Force.ExternalForce;
 
 public class Translatraton {

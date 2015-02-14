@@ -1,4 +1,4 @@
-package Bleach;
+package Bleach.Entity;
 
 import java.awt.Graphics;
 import java.awt.Point;

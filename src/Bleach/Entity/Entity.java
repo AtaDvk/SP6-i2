@@ -1,10 +1,12 @@
-package Bleach;
+package Bleach.Entity;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.Map;
 
+import Bleach.Level;
+import Bleach.LevelInteractable;
 import Bleach.PhysicsEngine.CollisionEngine.CollisionListener;
 import Bleach.PhysicsEngine.Force.ExternalForce;
 import Bleach.PhysicsEngine.Force.Force;

@@ -2,8 +2,8 @@ package Bleach.PhysicsEngine.CollisionEngine;
 
 import java.awt.geom.Point2D;
 
-import Bleach.Entity;
-import Bleach.EntityTranslatable;
+import Bleach.Entity.Entity;
+import Bleach.Entity.EntityTranslatable;
 
 public class Impact {
 
