@@ -36,10 +36,10 @@ public class Game {
 	    e2.printStackTrace();
 	}
 
-	myGame.setFPS(60);
+	Bleach.setFPS(60);
 
 	myGame.setSize(800, 600);
-	myGame.setTitle("My super game!");
+	Bleach.setTitle("My super game!");
 
 	Level firstLevel = new Level(2800, 1200, "Town");
 
@@ -52,7 +52,7 @@ public class Game {
 
 	// firstLevel.setMusicTrack("melody7");
 
-	myGame.addLevel(firstLevel);
+	Bleach.addLevel(firstLevel);
 
 	myGame.init();
 

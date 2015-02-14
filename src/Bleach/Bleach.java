@@ -26,33 +26,33 @@ import Bleach.Renderer.Picasso;
 
 public class Bleach extends JPanel {
     // Pointer to the active level.
-    private Level activeLevel;
+    private static Level activeLevel;
 
     // FPS limiter, limits how often the game is rendered.
-    private double FPS = 60;
+    private static double FPS = 60;
     // A handle to the window.
-    private JFrame jWindow;
+    private static JFrame jWindow;
     // All the levels.
-    private Map<String, Level> levels = new HashMap<>();
+    private static Map<String, Level> levels = new HashMap<>();
     // A (set of) bool to see if the game is paused by any subsystem.
-    private Map<PauseType, Boolean> pause = new HashMap<>();
+    private static Map<PauseType, Boolean> pause = new HashMap<>();
 
-    private Receptionist receptionist = null;
+    private static Receptionist receptionist = null;
 
-    private Picasso renderer;
+    private static Picasso renderer;
 
-    private long timeDebug;
+    private static long timeDebug;
 
     // Used for delta-time in the game loop (e.g. FPS limiting)
-    private double timePreviousLoop;
+    private static double timePreviousLoop;
 
     // Used for delta-time in the rendering (e.g. calculating actual rendering
     // FPS)
-    private double timePreviousRender;
+    private static double timePreviousRender;
 
-    private int winHeight;
-    private String winTitle;
-    private int winWidth;
+    private static int winHeight;
+    private static String winTitle;
+    private static int winWidth;
 
     public Bleach() {
 
@@ -150,7 +150,7 @@ public class Bleach extends JPanel {
 	}
     }
 
-    private boolean isPaused() {
+    public static boolean isPaused() {
 	/* Check if any subsystem is pausing the game */
 	for (Entry<PauseType, Boolean> entry : pause.entrySet()) {
 	    if (entry.getValue()) {
@@ -161,7 +161,7 @@ public class Bleach extends JPanel {
 	return false;
     }
 
-    private boolean setActiveLevel(String key) {
+    private static boolean setActiveLevel(String key) {
 	Level newLevel = null;
 	newLevel = levels.get(key);
 	if (newLevel != null)
@@ -170,7 +170,7 @@ public class Bleach extends JPanel {
 	return newLevel != null;
     }
 
-    public void addLevel(Level level) {
+    public static void addLevel(Level level) {
 	if (level != null) {
 	    level.setScreenSize(winWidth, winHeight);
 	    levels.put(level.getKey(), level);
@@ -182,7 +182,7 @@ public class Bleach extends JPanel {
     }
 
     public void addReceptionist(Receptionist receptionist) {
-	this.receptionist = receptionist;
+	Bleach.receptionist = receptionist;
 
 	for (KeyBinding keyBinding : receptionist.getKeyBindings()) {
 	    this.getInputMap().put(keyBinding.getKey(), keyBinding.getActionMapKey());
@@ -198,7 +198,7 @@ public class Bleach extends JPanel {
 
 	    @Override
 	    public void mouseMoved(MouseEvent event) {
-		Bleach.this.receptionist.handleEvent(event);
+		Bleach.receptionist.handleEvent(event);
 	    }
 	});
 
@@ -291,14 +291,14 @@ public class Bleach extends JPanel {
 	gameLoop();
     }
 
-    public double setFPS(double newFPS) {
+    public static double setFPS(double newFPS) {
 	/* Sets the FPS, returns the old FPS. */
 	double retval = FPS;
 	FPS = newFPS;
 	return retval;
     }
 
-    public void setTitle(String title) {
+    public static void setTitle(String title) {
 	winTitle = title;
     }
 
