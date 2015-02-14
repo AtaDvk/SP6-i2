@@ -10,46 +10,46 @@ import Bleach.PhysicsEngine.Force.Force;
 
 public interface EntityTranslatable {
 
-	public void addExternalForce(ExternalForce.ForceIdentifier identifier, ExternalForce externalForce);
-	
-	public void die();
+    public void addExternalForce(ExternalForce.ForceIdentifier identifier, ExternalForce externalForce);
 
-	public Rectangle2D.Double getBoundary();
+    public void die();
 
-	public CollisionListener getCollisionListener();
+    public Rectangle2D.Double getBoundary();
 
-	public Map<ExternalForce.ForceIdentifier, ExternalForce> getExternalForces();
+    public CollisionListener getCollisionListener();
 
-	public double getFallingTime();
+    public Map<ExternalForce.ForceIdentifier, ExternalForce> getExternalForces();
 
-	public Force getForce();
+    public double getFallingTime();
 
-	public double getMass();
+    public Force getForce();
 
-	public Point2D.Double getPosition();
-	
-	public Point2D.Double getPrevPosition();
+    public double getMass();
 
-	public double getRadius();
+    public Point2D.Double getPosition();
 
-	public double getWeight();
+    public Point2D.Double getPrevPosition();
 
-	public boolean hasCollisionListener();
+    public double getRadius();
 
-	public boolean isDead();
-	
-	public boolean isMoving();
+    public double getWeight();
 
-	public void isMoving(boolean setMoving);
-	
-	public void startFalling();
+    public boolean hasCollisionListener();
 
-	public void setMass(double mass);
+    public boolean isDead();
 
-	public void setOnCollision(CollisionListener onCollision);
+    public boolean isMoving();
 
-	public void setPosition(Point2D.Double position);
+    public void isMoving(boolean setMoving);
 
-	public void setWeight(double weight);
+    public void setMass(double mass);
+
+    public void setOnCollision(CollisionListener onCollision);
+
+    public void setPosition(Point2D.Double position);
+
+    public void setWeight(double weight);
+
+    public void startFalling();
 
 }

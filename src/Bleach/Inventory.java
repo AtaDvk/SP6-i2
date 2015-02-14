@@ -4,31 +4,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Inventory {
-	private int hotbarCount; // How many inventory slots are reserved for the
-								// hotbar.
-	private int size; // How many items the inventory can hold.
-	private List<InventoryItem> items; // List of items in the inventory.
+    private List<InventoryItem> items; // List of items in the inventory.
+    private int size; // How many items the inventory can hold.
 
-	public Inventory() {
-		hotbarCount = 10;
-		size = 45;
-		items = new ArrayList<InventoryItem>();
-	}
+    public Inventory() {
+	size = 45;
+	items = new ArrayList<>();
+    }
 
-	public boolean addItem(InventoryItem item) {
-		if (items.size() < size) {
-			items.add(item);
-			return true;
-		} else {
-			return false;
-		}
+    public boolean addItem(InventoryItem item) {
+	if (items.size() < size) {
+	    items.add(item);
+	    return true;
 	}
+	return false;
+    }
 
-	public InventoryItem getItem(int index) {
-		if (index < 0 || index >= items.size()) {
-			return null;
-		} else {
-			return items.get(index);
-		}
+    public InventoryItem getItem(int index) {
+	if (index < 0 || index >= items.size()) {
+	    return null;
 	}
+	return items.get(index);
+    }
 }
