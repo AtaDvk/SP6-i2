@@ -25,44 +25,49 @@ import Bleach.PhysicsEngine.Physique;
 import Bleach.Renderer.Picasso;
 
 public class Bleach extends JPanel {
+
+    // Singleton pattern
+    private static Bleach instance = null;
+
     // Pointer to the active level.
-    private static Level activeLevel;
+    private Level activeLevel;
 
     // FPS limiter, limits how often the game is rendered.
-    private static double FPS = 60;
+    private double FPS = 60;
     // A handle to the window.
-    private static JFrame jWindow;
+    private JFrame jWindow;
     // All the levels.
-    private static Map<String, Level> levels = new HashMap<>();
+    private Map<String, Level> levels = new HashMap<>();
     // A (set of) bool to see if the game is paused by any subsystem.
-    private static Map<PauseType, Boolean> pause = new HashMap<>();
+    private Map<PauseType, Boolean> pause = new HashMap<>();
 
-    private static Receptionist receptionist = null;
+    private Receptionist receptionist = null;
 
-    private static Picasso renderer;
+    private Picasso renderer;
 
-    private static long timeDebug;
+    private long timeDebug;
 
     // Used for delta-time in the game loop (e.g. FPS limiting)
-    private static double timePreviousLoop;
+    private double timePreviousLoop;
 
     // Used for delta-time in the rendering (e.g. calculating actual rendering
     // FPS)
-    private static double timePreviousRender;
+    private double timePreviousRender;
 
-    private static int winHeight;
-    private static String winTitle;
-    private static int winWidth;
+    private int winHeight = 600; // Default height;
+    private String winTitle = "Game window"; // Default title;;
+    private int winWidth = 800; // Default width;
 
-    public Bleach() {
-
+    private Bleach() {
 	// Let's try to HW-accelerate stuff.
 	System.setProperty("sun.java2d.opengl", "True");
+	this.timePreviousLoop = this.timePreviousRender = System.currentTimeMillis();
+    }
 
-	timePreviousLoop = timePreviousRender = System.currentTimeMillis();
-	winWidth = 800; // Default width
-	winHeight = 600; // Default height
-	winTitle = "Game window"; // Default title;
+    public static Bleach getInstance() {
+	if (instance == null)
+	    instance = new Bleach();
+	return instance;
     }
 
     public static Sprite getSprite(String key) {
@@ -94,65 +99,65 @@ public class Bleach extends JPanel {
 	double deltaTime;
 
 	while (!quit) {
-	    deltaTime = System.currentTimeMillis() - timePreviousLoop;
+	    deltaTime = System.currentTimeMillis() - this.timePreviousLoop;
 
 	    // Simulate work
-	    while (System.currentTimeMillis() - timePreviousLoop < 34) {
+	    while (System.currentTimeMillis() - this.timePreviousLoop < 34) {
 		Thread.yield();
 	    }
 
 	    if (!isPaused()) {
 		/* Physics engine */
-		Physique.step(activeLevel);
+		Physique.step(this.activeLevel);
 
 		/* Let's iterate entities and tick() and/or delete them */
 		Iterator<EntityTranslatable> iter;
 
 		/* Projectiles heartbeat */
-		iter = activeLevel.getProjectiles().iterator();
+		iter = this.activeLevel.getProjectiles().iterator();
 		EntityTranslatable projectile;
 		while (iter.hasNext()) {
 		    projectile = iter.next();
 		    if (projectile.isDead()) {
 			iter.remove();
 		    } else {
-			((Entity) projectile).tick(activeLevel);
+			((Entity) projectile).tick(this.activeLevel);
 		    }
 		}
 
 		/* Mobiles heartbeat */
-		iter = activeLevel.getMobiles().iterator();
+		iter = this.activeLevel.getMobiles().iterator();
 		EntityTranslatable mobile;
 		while (iter.hasNext()) {
 		    mobile = iter.next();
 		    if (mobile.isDead()) {
 			iter.remove();
 		    } else {
-			((Entity) mobile).tick(activeLevel);
+			((Entity) mobile).tick(this.activeLevel);
 		    }
 		}
 
 		/* Players heartbeat */
-		iter = activeLevel.getPlayers().iterator();
+		iter = this.activeLevel.getPlayers().iterator();
 		EntityTranslatable player;
 		while (iter.hasNext()) {
 		    player = iter.next();
 		    if (player.isDead()) {
 			iter.remove();
 		    } else {
-			((Entity) player).tick(activeLevel);
-			activeLevel.focusEntity(((Entity) player), false);
+			((Entity) player).tick(this.activeLevel);
+			this.activeLevel.focusEntity(((Entity) player), false);
 		    }
 		}
 	    }
 	    paintComponent(this.getGraphics());
-	    timePreviousLoop = System.currentTimeMillis();
+	    this.timePreviousLoop = System.currentTimeMillis();
 	}
     }
 
-    public static boolean isPaused() {
+    public boolean isPaused() {
 	/* Check if any subsystem is pausing the game */
-	for (Entry<PauseType, Boolean> entry : pause.entrySet()) {
+	for (Entry<PauseType, Boolean> entry : this.pause.entrySet()) {
 	    if (entry.getValue()) {
 		return true;
 	    }
@@ -161,44 +166,44 @@ public class Bleach extends JPanel {
 	return false;
     }
 
-    private static boolean setActiveLevel(String key) {
+    private boolean setActiveLevel(String key) {
 	Level newLevel = null;
-	newLevel = levels.get(key);
+	newLevel = this.levels.get(key);
 	if (newLevel != null)
-	    activeLevel = newLevel;
+	    this.activeLevel = newLevel;
 
 	return newLevel != null;
     }
 
-    public static void addLevel(Level level) {
+    public void addLevel(Level level) {
 	if (level != null) {
-	    level.setScreenSize(winWidth, winHeight);
-	    levels.put(level.getKey(), level);
+	    level.setScreenSize(this.winWidth, this.winHeight);
+	    this.levels.put(level.getKey(), level);
 
 	    // No active level has been set, let's set it to this one.
-	    if (activeLevel == null)
-		activeLevel = level;
+	    if (this.activeLevel == null)
+		this.activeLevel = level;
 	}
     }
 
     public void addReceptionist(Receptionist receptionist) {
-	Bleach.receptionist = receptionist;
+	this.receptionist = receptionist;
 
 	for (KeyBinding keyBinding : receptionist.getKeyBindings()) {
-	    this.getInputMap().put(keyBinding.getKey(), keyBinding.getActionMapKey());
-	    this.getActionMap().put(keyBinding.getActionMapKey(), keyBinding.getAction());
+	    Bleach.this.getInputMap().put(keyBinding.getKey(), keyBinding.getActionMapKey());
+	    Bleach.this.getActionMap().put(keyBinding.getActionMapKey(), keyBinding.getAction());
 	}
 
 	this.addMouseMotionListener(new MouseMotionListener() {
 
 	    @Override
 	    public void mouseDragged(MouseEvent e) {
-		// Ignore
+		Bleach.this.receptionist.handleEvent(e);
 	    }
 
 	    @Override
 	    public void mouseMoved(MouseEvent event) {
-		Bleach.receptionist.handleEvent(event);
+		Bleach.this.receptionist.handleEvent(event);
 	    }
 	});
 
@@ -210,10 +215,10 @@ public class Bleach extends JPanel {
     public void init() {
 
 	// Set the size of this JPanel before inserting it into the window.
-	setSize(winWidth, winHeight);
+	setSize(this.winWidth, this.winHeight);
 
 	// Sometimes setSize() just fails. Go figure.
-	setPreferredSize(new Dimension(winWidth, winHeight));
+	setPreferredSize(new Dimension(this.winWidth, this.winHeight));
 
 	// This is a pointer to this JPanel used in the Event Dispatch Thread
 	// (EDT).
@@ -221,7 +226,7 @@ public class Bleach extends JPanel {
 
 	// This is the window title variable used in the Event Dispatch Thread
 	// (EDT).
-	final String EDTwindowTitle = winTitle;
+	final String EDTwindowTitle = this.winTitle;
 
 	try {
 	    SwingUtilities.invokeAndWait(new Runnable() {
@@ -231,20 +236,20 @@ public class Bleach extends JPanel {
 		 */
 		@Override
 		public void run() {
-		    jWindow = new JFrame(EDTwindowTitle);
-		    jWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		    jWindow.setResizable(false);
-		    jWindow.add(EDTpointerToPanel);
+		    Bleach.this.jWindow = new JFrame(EDTwindowTitle);
+		    Bleach.this.jWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		    Bleach.this.jWindow.setResizable(false);
+		    Bleach.this.jWindow.add(EDTpointerToPanel);
 
 		    // Fixes a bug that sometimes adds 10 pixels to width and
 		    // height. Weird stuff.
-		    jWindow.pack();
-		    jWindow.pack();
+		    Bleach.this.jWindow.pack();
+		    Bleach.this.jWindow.pack();
 
 		    // Center the window on the primary monitor.
-		    jWindow.setLocationRelativeTo(null);
+		    Bleach.this.jWindow.setLocationRelativeTo(null);
 
-		    jWindow.setVisible(true);
+		    Bleach.this.jWindow.setVisible(true);
 		}
 	    });
 	} catch (InvocationTargetException | InterruptedException e) {
@@ -256,50 +261,50 @@ public class Bleach extends JPanel {
 	setFocusable(true);
 	setBackground(Color.cyan);
 
-	renderer = new Picasso(winWidth, winHeight);
+	this.renderer = new Picasso(this.winWidth, this.winHeight);
     }
 
     public void init(int windowWidth, int windowHeight, String windowTitle) {
-	winWidth = windowWidth;
-	winHeight = windowHeight;
-	winTitle = windowTitle;
+	this.winWidth = windowWidth;
+	this.winHeight = windowHeight;
+	this.winTitle = windowTitle;
 	init();
     }
 
     @Override
     public void paintComponent(Graphics g) {
-	double deltaTime = System.currentTimeMillis() - timePreviousRender;
+	double deltaTime = System.currentTimeMillis() - this.timePreviousRender;
 
-	if (FPS > 0 && deltaTime < 1000.0 / FPS)
+	if (this.FPS > 0 && deltaTime < 1000.0 / this.FPS)
 	    return;
 
 	double actualFPS = (1000.0 / Math.max(1, (deltaTime)));
 
-	timeDebug += deltaTime;
-	if (timeDebug >= 1000) {
-	    timeDebug = 0;
-	    renderer.clearDebugLines();
-	    renderer.addDebugLine("FPS: " + (int) actualFPS);
+	this.timeDebug += deltaTime;
+	if (this.timeDebug >= 1000) {
+	    this.timeDebug = 0;
+	    this.renderer.clearDebugLines();
+	    this.renderer.addDebugLine("FPS: " + (int) actualFPS);
 	}
 
-	renderer.render(g, activeLevel);
+	this.renderer.render(g, this.activeLevel);
 
-	timePreviousRender = System.currentTimeMillis();
+	this.timePreviousRender = System.currentTimeMillis();
     }
 
     public void run() {
 	gameLoop();
     }
 
-    public static double setFPS(double newFPS) {
+    public double setFPS(double newFPS) {
 	/* Sets the FPS, returns the old FPS. */
-	double retval = FPS;
-	FPS = newFPS;
+	double retval = this.FPS;
+	this.FPS = newFPS;
 	return retval;
     }
 
-    public static void setTitle(String title) {
-	winTitle = title;
+    public void setTitle(String title) {
+	this.winTitle = title;
     }
 
     /**
