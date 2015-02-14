@@ -60,10 +60,8 @@ public class Discette {
 	try {
 	    entries = json.fromJson(readFile(pathToJSON), JsonObject[].class);
 	} catch (JsonSyntaxException e) {
-	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	} catch (IOException e) {
-	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
 

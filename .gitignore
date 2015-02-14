@@ -1,6 +1,7 @@
 # Project files
 .classpath
 .project
+.settings
 
 # Windows image file caches
 Thumbs.db
