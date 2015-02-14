@@ -11,12 +11,12 @@ import Bleach.PhysicsEngine.Force.Force;
 
 public class Entity implements EntityTranslatable {
 	protected Sprite sprite;
-	protected double x, y;
+	protected double x, y, xOld, yOld;
 	protected final double r;
 	protected boolean hasRectangularCollisionModel = false;
-	protected boolean isLanded = false;
-	protected Force internalForce = new Force(Math.toRadians(90), 0);
-	protected Map<Object, ExternalForce> externalForces = new HashMap<>();
+	//protected boolean isLanded = false;
+	protected Force internalForce = new Force(Math.toRadians(0), 0);
+	protected Map<ExternalForce.ForceIdentifier, ExternalForce> externalForces = new HashMap<>();
 	protected CollisionListener collisionListener = null;
 
 	protected double mass = 0.0;
@@ -25,20 +25,27 @@ public class Entity implements EntityTranslatable {
 	protected long timePreviousTick;
 	protected long timeStartFalling;
 	protected boolean bMoving; // Is the entity currently moving?
+	protected boolean bDead;
 
 	protected Entity(Sprite sprite, double x, double y, double r) {
 		this.sprite = sprite;
-		this.x = x;
-		this.y = y;
+		this.x = xOld = x;
+		this.y = yOld = y;
 		this.r = r;
 		timePreviousTick = System.currentTimeMillis();
 		timeStartFalling = System.currentTimeMillis();
 		bMoving = false;
+		bDead = false;
 	}
 
 	@Override
-	public void addExternalForce(Object identifier, ExternalForce externalForce) {
+	public void addExternalForce(ExternalForce.ForceIdentifier identifier, ExternalForce externalForce) {
 		this.externalForces.put(identifier, externalForce);
+	}
+	
+	@Override
+	public void die(){
+		bDead = true;
 	}
 
 	@Override
@@ -61,7 +68,7 @@ public class Entity implements EntityTranslatable {
 	}
 
 	@Override
-	public Map<Object, ExternalForce> getExternalForces() {
+	public Map<ExternalForce.ForceIdentifier, ExternalForce> getExternalForces() {
 		return this.externalForces;
 	}
 
@@ -71,10 +78,7 @@ public class Entity implements EntityTranslatable {
 		 * Returns the delta time in seconds since this started falling.
 		 */
 
-		if (isLanded)
-			return 0;
-		else
-			return (System.currentTimeMillis() - timeStartFalling) / 1000.0;
+		return (System.currentTimeMillis() - timeStartFalling) / 1000.0;
 	}
 
 	@Override
@@ -90,6 +94,11 @@ public class Entity implements EntityTranslatable {
 	@Override
 	public Point2D.Double getPosition() {
 		return new Point2D.Double(x, y);
+	}
+	
+	@Override
+	public Point2D.Double getPrevPosition(){
+		return new Point2D.Double(xOld, yOld);
 	}
 
 	@Override
@@ -114,10 +123,10 @@ public class Entity implements EntityTranslatable {
 	public boolean hasRectangularCollisionModel() {
 		return hasRectangularCollisionModel;
 	}
-
+	
 	@Override
-	public final boolean isLanded() {
-		return isLanded;
+	public boolean isDead(){
+		return bDead;
 	}
 
 	@Override
@@ -137,23 +146,20 @@ public class Entity implements EntityTranslatable {
 		}
 		return false;
 	}
+	
+	@Override
+	public void startFalling(){
+		/*
+		 * We start falling after landing so this is basically "landed()"
+		 */
+		
+		timeStartFalling = System.currentTimeMillis();
+		this.getExternalForces().remove(ExternalForce.ForceIdentifier.JUMP);
+		this.getExternalForces().remove(ExternalForce.ForceIdentifier.GRAVITY);
+	}
 
 	public void setHasRectangularCollisionModel(boolean hasRectangularCollisionModel) {
 		this.hasRectangularCollisionModel = hasRectangularCollisionModel;
-	}
-
-	@Override
-	public final void setLanded(boolean isLanded) {
-		if (this.isLanded && !isLanded) {
-			timeStartFalling = System.currentTimeMillis();
-		}
-
-		if (isLanded) {
-			this.getExternalForces().remove(ExternalForce.ForceIdentifier.JUMP);
-			this.getExternalForces().remove(ExternalForce.ForceIdentifier.GRAVITY);
-		}
-
-		this.isLanded = isLanded;
 	}
 
 	@Override
@@ -168,6 +174,8 @@ public class Entity implements EntityTranslatable {
 
 	@Override
 	public void setPosition(Point2D.Double position) {
+		xOld = x;
+		yOld = y;
 		this.x = position.x;
 		this.y = position.y;
 	}
@@ -179,15 +187,6 @@ public class Entity implements EntityTranslatable {
 	}
 
 	public void tick(LevelInteractable activeLevel) {
-		// if(isMoving()){
-		// long deltaTime = System.nanoTime() - timePreviousTick;
-		// double magnitude = (deltaTime / 1000000000.0) * velocity;
-		// Point2D.Double position = getPosition();
-		//
-		// position.x += Math.cos(vectorAngle) * magnitude;
-		// position.y += Math.sin(vectorAngle) * magnitude;
-		//
-		// setPosition(position);
-		// }
+		
 	}
 }

@@ -28,10 +28,10 @@ public class Game {
 
 		Bleach myGame = new Bleach();
 
-		myGame.loadImages("assets/images/assets.json");
+		myGame.loadImages("SP6engine/assets/images/assets.json");
 
 		try {
-			myGame.loadSounds("assets/sounds/assets.json");
+			myGame.loadSounds("SP6engine/assets/sounds/assets.json");
 		} catch (IOException e2) {
 			e2.printStackTrace();
 		} catch (UnsupportedAudioFileException e2) {
@@ -50,7 +50,7 @@ public class Game {
 		firstLevel.addMobile(blobby);
 		firstLevel.addPlayer(player);
 
-		firstLevel.levelBuilder(myGame.loadLevel("assets/levels/level1.json"));
+		firstLevel.levelBuilder(myGame.loadLevel("SP6engine/assets/levels/level1.json"));
 
 		// firstLevel.setMusicTrack("melody7");
 
@@ -103,21 +103,27 @@ public class Game {
 				player.isMoving(false);
 			}
 		}));
+		
+		receptionist.addKeyBinding(new KeyBinding(KeyStroke.getKeyStroke("pressed C"), "pressed C", new AbstractAction() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//player.getForce().setVectorAngle(0);
+				//player.isMoving(true);
+				//((Level) activeLevel).addProjectile(new ProjectileBullet(x, y, getForce().getVectorAngle(), this));
+				
+				firstLevel.addProjectile(new ProjectileBullet(player.getPosition().x, player.getPosition().y, player.getForce().getVectorAngle(), player));
+				Boom.playSound("metalsound");
+			}
+		}));
 
 		receptionist.addKeyBinding(new KeyBinding(KeyStroke.getKeyStroke("pressed SPACE"), "pressed SPACE", new AbstractAction() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (player.isLanded()) {
-					player.addExternalForce(ExternalForce.ForceIdentifier.JUMP, new ExternalForce(Math.toRadians(270), 200));
-					player.setLanded(false);
-
-					try {
-						Boom.playSound(Discette.getSound("drop"));
-					} catch (LineUnavailableException e1) {
-						e1.printStackTrace();
-					}
-
+				
+				if(player.jump(200)){
+					Boom.playSound("drop");
 				}
 			}
 		}));
@@ -127,7 +133,7 @@ public class Game {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				ExternalForce thrust = new ExternalForce(Math.toRadians(270), 100);
+				ExternalForce thrust = new ExternalForce(Math.toRadians(270), 120);
 				thrust.setOnCollision(new CollisionListener() {
 
 					@Override
@@ -135,15 +141,11 @@ public class Game {
 						thrust.kill();
 					}
 				});
+				
+				player.startFalling();
+				player.addExternalForce(ExternalForce.ForceIdentifier.JUMP , thrust);
 
-				player.addExternalForce("JETPACK", thrust);
-				player.setLanded(false);
-
-				try {
-					Boom.playSound(Discette.getSound("explosion"));
-				} catch (LineUnavailableException e1) {
-					e1.printStackTrace();
-				}
+				Boom.playSound("explosion");
 			}
 		}));
 

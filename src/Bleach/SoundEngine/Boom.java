@@ -4,6 +4,8 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 
+import Bleach.Loader.Discette;
+
 public class Boom {
 
 	private static Sound ambientSoundtrack = null;
@@ -11,8 +13,19 @@ public class Boom {
 	public static Sound getAmbientSoundtrack() {
 		return ambientSoundtrack;
 	}
+	
+	public static boolean playSound(String soundKey){
+		try {
+			playSoundInternal(Discette.getSound(soundKey));
+		} catch (LineUnavailableException e1) {
+			//e1.printStackTrace();
+			return false;
+		}
+		
+		return true;
+	}
 
-	public static void playSound(Sound sound) throws LineUnavailableException {
+	private static void playSoundInternal(Sound sound) throws LineUnavailableException {
 
 		Clip clip = createClip(sound);
 		clip.start();

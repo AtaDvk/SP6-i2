@@ -10,13 +10,15 @@ import Bleach.PhysicsEngine.Force.Force;
 
 public interface EntityTranslatable {
 
-	public void addExternalForce(Object identifier, ExternalForce externalForce);
+	public void addExternalForce(ExternalForce.ForceIdentifier identifier, ExternalForce externalForce);
+	
+	public void die();
 
 	public Rectangle2D.Double getBoundary();
 
 	public CollisionListener getCollisionListener();
 
-	public Map<Object, ExternalForce> getExternalForces();
+	public Map<ExternalForce.ForceIdentifier, ExternalForce> getExternalForces();
 
 	public double getFallingTime();
 
@@ -25,6 +27,8 @@ public interface EntityTranslatable {
 	public double getMass();
 
 	public Point2D.Double getPosition();
+	
+	public Point2D.Double getPrevPosition();
 
 	public double getRadius();
 
@@ -32,13 +36,13 @@ public interface EntityTranslatable {
 
 	public boolean hasCollisionListener();
 
-	public boolean isLanded();
-
+	public boolean isDead();
+	
 	public boolean isMoving();
 
 	public void isMoving(boolean setMoving);
-
-	public void setLanded(boolean isLanded);
+	
+	public void startFalling();
 
 	public void setMass(double mass);
 

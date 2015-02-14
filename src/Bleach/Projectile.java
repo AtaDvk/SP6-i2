@@ -13,6 +13,7 @@ public abstract class Projectile extends Entity {
 		super(sprite, x, y, r);
 		this.owner = owner;
 		this.getForce().setVectorAngle(angle);
+		this.getForce().setVelocity(100);
 		bMoving = true;
 	}
 

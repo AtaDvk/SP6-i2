@@ -23,11 +23,12 @@ public class Translatraton {
 		}
 
 		// Re-calculates the next Y-position based on velocity + gravity
-		if (entity.isLanded() == false && entity.getMass() > 0.0) {
+		if (entity.getMass() > 0.0) {
 			double magicGravityModifier = 12.3;
+			double magicTimeModifier = 0.3;
 			double gravitionalAcceleration = gravity * entity.getMass();
 			entity.setWeight(entity.getWeight() + gravitionalAcceleration);
-			nextPosition.y += (gravity * magicGravityModifier) * Math.pow(entity.getFallingTime(), 2);
+			nextPosition.y += (gravity * magicGravityModifier) * Math.pow(entity.getFallingTime() + magicTimeModifier, 2);
 		}
 
 		Iterator<ExternalForce> externalForceIt = entity.getExternalForces().values().iterator();

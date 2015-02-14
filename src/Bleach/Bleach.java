@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -22,6 +23,7 @@ import Bleach.InputManager.Receptionist;
 import Bleach.InputManager.Receptionist.KeyBinding;
 import Bleach.Loader.Discette;
 import Bleach.PhysicsEngine.Physique;
+import Bleach.PhysicsEngine.Force.ExternalForce;
 import Bleach.Renderer.Picasso;
 import Bleach.SoundEngine.Boom;
 
@@ -220,10 +222,6 @@ public class Bleach extends JPanel {
 		timePreviousRender = System.currentTimeMillis();
 	}
 
-	public void playSound(String soundID) throws LineUnavailableException {
-		Boom.playSound(Discette.getSound(soundID));
-	}
-
 	public void run() {
 		gameLoop();
 	}
@@ -256,24 +254,46 @@ public class Bleach extends JPanel {
 			if (!isPaused()) {
 				/* Physics engine */
 				Physique.step(activeLevel);
-
+				
+				/* Let's iterate entities and tick() and/or delete them */
+				Iterator<EntityTranslatable> iter;
+				
 				/* Projectiles heartbeat */
-				for (EntityTranslatable projectile : activeLevel.getProjectiles()) {
-					((Entity) projectile).tick(activeLevel);
+				iter = activeLevel.getProjectiles().iterator();
+				EntityTranslatable projectile;
+				while(iter.hasNext()){
+					projectile = iter.next();
+					if(projectile.isDead()){
+						iter.remove();
+					}else{
+						((Entity)projectile).tick(activeLevel);
+					}
 				}
-
+				
 				/* Mobiles heartbeat */
-				for (EntityTranslatable mob : activeLevel.getMobiles()) {
-					((Entity) mob).tick(activeLevel);
+				iter = activeLevel.getMobiles().iterator();
+				EntityTranslatable mobile;
+				while(iter.hasNext()){
+					mobile = iter.next();
+					if(mobile.isDead()){
+						iter.remove();
+					}else{
+						((Entity)mobile).tick(activeLevel);
+					}
 				}
-
-				/* Player Heartbeat */
-				for (EntityTranslatable player : activeLevel.getPlayers()) {
-					Entity p = ((Entity) player);
-					p.tick(activeLevel);
-					activeLevel.focusEntity(p, false);
+				
+				/* Players heartbeat */
+				iter = activeLevel.getPlayers().iterator();
+				EntityTranslatable player;
+				while(iter.hasNext()){
+					player = iter.next();
+					if(player.isDead()){
+						iter.remove();
+					}else{
+						((Entity)player).tick(activeLevel);
+						activeLevel.focusEntity(((Entity)player), false);
+					}
 				}
-
 			}
 			paintComponent(this.getGraphics());
 			timePreviousLoop = System.currentTimeMillis();
