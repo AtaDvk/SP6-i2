@@ -23,8 +23,8 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-import Bleach.SpriteAnimated;
 import Bleach.Entity.Sprite;
+import Bleach.Entity.SpriteAnimated;
 import Bleach.SoundEngine.Sound;
 
 import com.google.gson.Gson;

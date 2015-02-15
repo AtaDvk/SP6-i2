@@ -23,6 +23,7 @@ import Bleach.Entity.EntityTranslatable;
 import Bleach.Entity.Sprite;
 import Bleach.InputManager.Receptionist;
 import Bleach.InputManager.Receptionist.KeyBinding;
+import Bleach.Level.Level;
 import Bleach.Loader.Discette;
 import Bleach.PhysicsEngine.Physique;
 import Bleach.Renderer.Picasso;
@@ -32,24 +33,24 @@ public class Bleach extends JPanel {
     // Singleton pattern
     private static Bleach instance = null;
 
-    // Clock
-    private ClockDude clockDude = new ClockDude();
-
     // Pointer to the active level.
     private Level activeLevel;
 
     // FPS limiter, limits how often the game is rendered.
     private double FPS = 60;
+
     // A handle to the window.
     private JFrame jWindow;
     // All the levels.
     private Map<String, Level> levels = new HashMap<>();
     // A (set of) bool to see if the game is paused by any subsystem.
     private Map<PauseType, Boolean> pause = new HashMap<>();
-
     private Receptionist receptionist = null;
 
     private Picasso renderer;
+
+    // Clock
+    private Timestamp timestampCard = new Timestamp();
 
     private int winHeight = 600; // Default height;
     private String winTitle = "Game window"; // Default title;;
@@ -59,7 +60,7 @@ public class Bleach extends JPanel {
 	// Let's try to HW-accelerate stuff.
 	System.setProperty("sun.java2d.opengl", "True");
 
-	this.clockDude.tickAll();
+	this.timestampCard.tickAll();
     }
 
     public static Bleach getInstance() {
@@ -97,10 +98,10 @@ public class Bleach extends JPanel {
 	double deltaTime;
 
 	while (!quit) {
-	    deltaTime = System.currentTimeMillis() - this.clockDude.getTimePreviousLoop();
+	    deltaTime = System.currentTimeMillis() - this.timestampCard.getLastLoopTimestamp();
 
 	    // Simulate work
-	    while (System.currentTimeMillis() - this.clockDude.getTimePreviousLoop() < 34) {
+	    while (System.currentTimeMillis() - this.timestampCard.getLastLoopTimestamp() < 34) {
 		Thread.yield();
 	    }
 
@@ -149,19 +150,8 @@ public class Bleach extends JPanel {
 		}
 	    }
 	    paintComponent(this.getGraphics());
-	    this.clockDude.tickLoopTime();
+	    this.timestampCard.tickLoopTime();
 	}
-    }
-
-    public boolean isPaused() {
-	/* Check if any subsystem is pausing the game */
-	for (Entry<PauseType, Boolean> entry : this.pause.entrySet()) {
-	    if (entry.getValue()) {
-		return true;
-	    }
-	}
-
-	return false;
     }
 
     private boolean setActiveLevel(String key) {
@@ -269,25 +259,36 @@ public class Bleach extends JPanel {
 	init();
     }
 
+    public boolean isPaused() {
+	/* Check if any subsystem is pausing the game */
+	for (Entry<PauseType, Boolean> entry : this.pause.entrySet()) {
+	    if (entry.getValue()) {
+		return true;
+	    }
+	}
+
+	return false;
+    }
+
     @Override
     public void paintComponent(Graphics g) {
-	double deltaTime = System.currentTimeMillis() - this.clockDude.getTimePreviousRender();
+	double deltaTime = System.currentTimeMillis() - this.timestampCard.getLastRenderTimestamp();
 
 	if (this.FPS > 0 && deltaTime < 1000.0 / this.FPS)
 	    return;
 
 	double actualFPS = (1000.0 / Math.max(1, (deltaTime)));
 
-	this.clockDude.incDebugTimestamp(deltaTime);
-	if (this.clockDude.getTimeDebug() >= 1000) {
-	    this.clockDude.resetDebugTimestamp();
+	this.timestampCard.incDebugTimestamp(deltaTime);
+	if (this.timestampCard.getCurrentDebugTimestamp() >= 1000) {
+	    this.timestampCard.resetDebugTimestamp();
 	    this.renderer.clearDebugLines();
 	    this.renderer.addDebugLine("FPS: " + (int) actualFPS);
 	}
 
 	this.renderer.render(g, this.activeLevel);
 
-	this.clockDude.tickLastRenderTime();
+	this.timestampCard.tickLastRenderTime();
     }
 
     public void run() {
@@ -321,7 +322,7 @@ public class Bleach extends JPanel {
 	USER
     }
 
-    public static class ClockDude {
+    public static class Timestamp {
 
 	private long timeDebug = 0L;
 
@@ -336,40 +337,40 @@ public class Bleach extends JPanel {
 	 */
 	private double timePreviousRender = 0.0;
 
-	public ClockDude() {
+	public Timestamp() {
 
 	}
 
-	public void resetDebugTimestamp() {
-	    this.timeDebug = 0;
+	public long getCurrentDebugTimestamp() {
+	    return this.timeDebug;
+	}
+
+	public double getLastLoopTimestamp() {
+	    return this.timePreviousLoop;
+	}
+
+	public double getLastRenderTimestamp() {
+	    return this.timePreviousRender;
 	}
 
 	public void incDebugTimestamp(double incrementation) {
 	    this.timeDebug += incrementation;
 	}
 
-	public void tickLoopTime() {
-	    this.timePreviousLoop = System.currentTimeMillis();
-	}
-
-	public void tickLastRenderTime() {
-	    this.timePreviousRender = System.currentTimeMillis();
+	public void resetDebugTimestamp() {
+	    this.timeDebug = 0;
 	}
 
 	public void tickAll() {
 	    this.timePreviousLoop = this.timePreviousRender = System.currentTimeMillis();
 	}
 
-	public long getTimeDebug() {
-	    return this.timeDebug;
+	public void tickLastRenderTime() {
+	    this.timePreviousRender = System.currentTimeMillis();
 	}
 
-	public double getTimePreviousLoop() {
-	    return this.timePreviousLoop;
-	}
-
-	public double getTimePreviousRender() {
-	    return this.timePreviousRender;
+	public void tickLoopTime() {
+	    this.timePreviousLoop = System.currentTimeMillis();
 	}
 
     }

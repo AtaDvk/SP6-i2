@@ -1,7 +1,6 @@
-package Bleach;
+package Bleach.Entity;
 
-import Bleach.Entity.Entity;
-import Bleach.Entity.Sprite;
+import Bleach.Level.LevelInteractable;
 import Bleach.PhysicsEngine.Force.ExternalForce;
 
 public abstract class EntityLiving extends Entity {
@@ -18,38 +17,35 @@ public abstract class EntityLiving extends Entity {
 	this.health = this.healthMax = health;
 	this.attackPower = attackPower;
 	this.getForce().setVelocity(velocity);
-	inventory = new Inventory();
-	mass = 5;
-	mayJump = true;
+	this.inventory = new Inventory();
+	this.mass = 5;
+	this.mayJump = true;
     }
 
     public abstract void AI(LevelInteractable activeLevel);
 
     public abstract double dealDamage();
 
-    public abstract double takeDamage(double amount); // Returns health after
-						      // damage.
-
     public double getDamage() {
-	return attackPower;
+	return this.attackPower;
     }
 
     public double getHealth() {
-	return health;
+	return this.health;
     }
 
     public double getHealthMax() {
-	return healthMax;
+	return this.healthMax;
     }
 
     public Inventory getInventory() {
-	return inventory;
+	return this.inventory;
     }
 
     public boolean jump(double jumpVelocity) {
-	if (mayJump) {
+	if (this.mayJump) {
 	    addExternalForce(ExternalForce.ForceIdentifier.JUMP, new ExternalForce(Math.toRadians(270), jumpVelocity));
-	    mayJump = false;
+	    this.mayJump = false;
 	    return true;
 	}
 	return false;
@@ -58,14 +54,17 @@ public abstract class EntityLiving extends Entity {
     @Override
     public void startFalling() {
 	super.startFalling();
-	mayJump = true;
-    };
+	this.mayJump = true;
+    }
+
+    public abstract double takeDamage(double amount); // Returns health after
+						      // damage.;
 
     @Override
     public void tick(LevelInteractable activeLevel) {
 	super.tick(activeLevel);
 
 	AI(activeLevel);
-	timePreviousTick = System.currentTimeMillis();
+	this.timePreviousTick = System.currentTimeMillis();
     }
 }

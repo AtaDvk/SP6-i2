@@ -1,7 +1,6 @@
-
-import Bleach.EntityLiving;
-import Bleach.LevelInteractable;
+import Bleach.Entity.EntityLiving;
 import Bleach.Entity.Sprite;
+import Bleach.Level.LevelInteractable;
 
 public class Player extends EntityLiving {
 

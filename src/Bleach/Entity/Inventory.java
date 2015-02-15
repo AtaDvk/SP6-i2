@@ -1,4 +1,4 @@
-package Bleach;
+package Bleach.Entity;
 
 import java.util.ArrayList;
 import java.util.List;

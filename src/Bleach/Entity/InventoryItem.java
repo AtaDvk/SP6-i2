@@ -1,8 +1,6 @@
-package Bleach;
+package Bleach.Entity;
 
-import Bleach.Entity.Entity;
-import Bleach.Entity.EntityTranslatable;
-import Bleach.Entity.Sprite;
+import Bleach.Level.LevelInteractable;
 import Bleach.PhysicsEngine.CollisionEngine.Impact;
 
 public class InventoryItem extends Entity {

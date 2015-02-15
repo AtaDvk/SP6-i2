@@ -3,9 +3,9 @@ package Bleach.PhysicsEngine;
 import java.util.ArrayList;
 import java.util.List;
 
-import Bleach.LevelInteractable;
 import Bleach.Entity.Entity;
 import Bleach.Entity.EntityTranslatable;
+import Bleach.Level.LevelInteractable;
 import Bleach.PhysicsEngine.CollisionEngine.Impact;
 
 public class Physique {

@@ -7,11 +7,11 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-import Bleach.LevelInteractable;
-import Bleach.TerrainBlock;
 import Bleach.Entity.Entity;
 import Bleach.Entity.EntityTranslatable;
 import Bleach.Entity.Sprite;
+import Bleach.Level.LevelInteractable;
+import Bleach.Level.TerrainBlock;
 import Bleach.Loader.Discette;
 
 public class Picasso {

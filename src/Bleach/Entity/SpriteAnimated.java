@@ -1,9 +1,7 @@
-package Bleach;
+package Bleach.Entity;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-
-import Bleach.Entity.Sprite;
 
 public class SpriteAnimated extends Sprite {
 

@@ -1,8 +1,7 @@
-
-import Bleach.EntityLiving;
-import Bleach.Level;
-import Bleach.LevelInteractable;
+import Bleach.Entity.EntityLiving;
 import Bleach.Entity.Sprite;
+import Bleach.Level.Level;
+import Bleach.Level.LevelInteractable;
 
 public class EntityBlob extends EntityLiving {
 

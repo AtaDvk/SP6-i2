@@ -1,13 +1,12 @@
 
-
 import java.util.ArrayList;
 import java.util.List;
 
-import Bleach.EntityLiving;
-import Bleach.LevelInteractable;
-import Bleach.TerrainBlock;
+import Bleach.Entity.EntityLiving;
 import Bleach.Entity.EntityTranslatable;
 import Bleach.Entity.Projectile;
+import Bleach.Level.LevelInteractable;
+import Bleach.Level.TerrainBlock;
 import Bleach.Loader.Discette;
 import Bleach.PhysicsEngine.CollisionEngine.Impact;
 

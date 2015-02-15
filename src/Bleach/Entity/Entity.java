@@ -5,8 +5,8 @@ import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.Map;
 
-import Bleach.Level;
-import Bleach.LevelInteractable;
+import Bleach.Level.Level;
+import Bleach.Level.LevelInteractable;
 import Bleach.PhysicsEngine.CollisionEngine.CollisionListener;
 import Bleach.PhysicsEngine.Force.ExternalForce;
 import Bleach.PhysicsEngine.Force.Force;

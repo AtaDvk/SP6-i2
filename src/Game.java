@@ -7,10 +7,10 @@ import javax.swing.AbstractAction;
 import javax.swing.KeyStroke;
 
 import Bleach.Bleach;
-import Bleach.Level;
 import Bleach.Entity.Entity;
 import Bleach.InputManager.Receptionist;
 import Bleach.InputManager.Receptionist.KeyBinding;
+import Bleach.Level.Level;
 import Bleach.PhysicsEngine.CollisionEngine.CollisionListener;
 import Bleach.PhysicsEngine.Force.ExternalForce;
 import Bleach.SoundEngine.Boom;

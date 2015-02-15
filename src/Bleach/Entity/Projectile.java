@@ -1,7 +1,5 @@
 package Bleach.Entity;
 
-import Bleach.EntityLiving;
-
 public abstract class Projectile extends Entity {
 
     /**
@@ -19,9 +17,9 @@ public abstract class Projectile extends Entity {
 	bMoving = true;
     }
 
+    public abstract double dealDamage();
+
     public EntityLiving getOwner() {
 	return owner;
     }
-
-    public abstract double dealDamage();
 }
