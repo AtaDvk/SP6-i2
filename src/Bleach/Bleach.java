@@ -41,10 +41,13 @@ public class Bleach extends JPanel {
 
     // A handle to the window.
     private JFrame jWindow;
+    
     // All the levels.
     private Map<String, Level> levels = new HashMap<>();
+    
     // A (set of) bool to see if the game is paused by any subsystem.
     private Map<PauseType, Boolean> pause = new HashMap<>();
+    
     private Receptionist receptionist = null;
 
     private Picasso renderer;
@@ -52,9 +55,10 @@ public class Bleach extends JPanel {
     // Clock
     private Timestamp timestampCard = new Timestamp();
 
-    private int winHeight = 600; // Default height;
-    private String winTitle = "Game window"; // Default title;;
-    private int winWidth = 800; // Default width;
+    // Default height, width and title for the window
+    private int winHeight = 600; 
+    private String winTitle = "Game window";
+    private int winWidth = 800;
 
     private Bleach() {
 	// Let's try to HW-accelerate stuff.
@@ -279,7 +283,7 @@ public class Bleach extends JPanel {
 
 	double actualFPS = (1000.0 / Math.max(1, (deltaTime)));
 
-	this.timestampCard.incDebugTimestamp(deltaTime);
+	this.timestampCard.addToDebugTimestamp(deltaTime);
 	if (this.timestampCard.getCurrentDebugTimestamp() >= 1000) {
 	    this.timestampCard.resetDebugTimestamp();
 	    this.renderer.clearDebugLines();
@@ -353,7 +357,7 @@ public class Bleach extends JPanel {
 	    return this.timePreviousRender;
 	}
 
-	public void incDebugTimestamp(double incrementation) {
+	public void addToDebugTimestamp(double incrementation) {
 	    this.timeDebug += incrementation;
 	}
 
