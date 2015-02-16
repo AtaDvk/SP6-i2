@@ -1,5 +1,6 @@
 package Bleach.PhysicsEngine;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,6 +8,7 @@ import Bleach.Entity.Entity;
 import Bleach.Entity.EntityTranslatable;
 import Bleach.Level.LevelInteractable;
 import Bleach.PhysicsEngine.CollisionEngine.Impact;
+import Bleach.PhysicsEngine.TranslationEngine.Translatraton;
 
 public class Physique {
 
@@ -34,10 +36,16 @@ public class Physique {
 	// List that will contain all the entities present on the level
 	List<EntityTranslatable> entities = accumulateLevelEntityTranslatables(currentLevelSetting);
 
+	// Current time in nanoseconds
+	double deltaTimeSec = (System.currentTimeMillis() - timestamp) / 1000.0;
+
 	// Iterate over entities and calculate physics
 	for (EntityTranslatable currentEntity : entities) {
 
 	    // predict terrain collision
+
+	    // Translate entity
+	    Point2D.Double newPosition = Translatraton.translate((Entity) currentEntity, deltaTimeSec);
 
 	    // Checks whether if the new position collides with any object in
 	    // its way

@@ -44,9 +44,7 @@ public class Game {
 
 	Level firstLevel = new Level(2800, 1200, "Town");
 
-	EntityBlob blobby = new EntityBlob(Bleach.getSprite("blob"), 200, 264);
 	Player player = new Player(Bleach.getSprite("mushi"), 100, 100);
-	firstLevel.addMobile(blobby);
 	firstLevel.addPlayer(player);
 
 	firstLevel.levelBuilder(Bleach.loadLevel("assets/levels/level1.json"));
@@ -79,6 +77,7 @@ public class Game {
 	    public void actionPerformed(ActionEvent e) {
 		player.getForce().setVectorAngle(Math.PI);
 		player.isMoving(true);
+		System.out.println("A");
 	    }
 	}));
 

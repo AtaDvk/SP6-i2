@@ -28,7 +28,7 @@ import Bleach.Loader.Discette;
 import Bleach.PhysicsEngine.Physique;
 import Bleach.Renderer.Picasso;
 
-public class Bleach extends JPanel {
+public class Bleach {
 
     // Singleton pattern
     private static Bleach instance = null;
@@ -41,22 +41,24 @@ public class Bleach extends JPanel {
 
     // A handle to the window.
     private JFrame jWindow;
-    
+
     // All the levels.
     private Map<String, Level> levels = new HashMap<>();
-    
+
     // A (set of) bool to see if the game is paused by any subsystem.
     private Map<PauseType, Boolean> pause = new HashMap<>();
-    
+
     private Receptionist receptionist = null;
 
     private Picasso renderer;
+
+    private JPanel surface = new JPanel();
 
     // Clock
     private Timestamp timestampCard = new Timestamp();
 
     // Default height, width and title for the window
-    private int winHeight = 600; 
+    private int winHeight = 600;
     private String winTitle = "Game window";
     private int winWidth = 800;
 
@@ -153,9 +155,29 @@ public class Bleach extends JPanel {
 		    }
 		}
 	    }
-	    paintComponent(this.getGraphics());
+	    refresh(surface.getGraphics());
 	    this.timestampCard.tickLoopTime();
 	}
+    }
+
+    private void refresh(Graphics g) {
+	double deltaTime = System.currentTimeMillis() - this.timestampCard.getLastRenderTimestamp();
+
+	if (this.FPS > 0 && deltaTime < 1000.0 / this.FPS)
+	    return;
+
+	double actualFPS = (1000.0 / Math.max(1, (deltaTime)));
+
+	this.timestampCard.addToDebugTimestamp(deltaTime);
+	if (this.timestampCard.getCurrentDebugTimestamp() >= 1000) {
+	    this.timestampCard.resetDebugTimestamp();
+	    this.renderer.clearDebugLines();
+	    this.renderer.addDebugLine("FPS: " + (int) actualFPS);
+	}
+
+	this.renderer.render(g, this.activeLevel);
+
+	this.timestampCard.tickLastRenderTime();
     }
 
     private boolean setActiveLevel(String key) {
@@ -182,11 +204,11 @@ public class Bleach extends JPanel {
 	this.receptionist = receptionist;
 
 	for (KeyBinding keyBinding : receptionist.getKeyBindings()) {
-	    Bleach.this.getInputMap().put(keyBinding.getKey(), keyBinding.getActionMapKey());
-	    Bleach.this.getActionMap().put(keyBinding.getActionMapKey(), keyBinding.getAction());
+	    surface.getInputMap().put(keyBinding.getKey(), keyBinding.getActionMapKey());
+	    surface.getActionMap().put(keyBinding.getActionMapKey(), keyBinding.getAction());
 	}
 
-	this.addMouseMotionListener(new MouseMotionListener() {
+	surface.addMouseMotionListener(new MouseMotionListener() {
 
 	    @Override
 	    public void mouseDragged(MouseEvent e) {
@@ -206,11 +228,14 @@ public class Bleach extends JPanel {
      **/
     public void init() {
 
+	surface.setSize(this.winWidth, this.winHeight);
+	surface.setPreferredSize(new Dimension(this.winWidth, this.winHeight));
+
 	// Set the size of this JPanel before inserting it into the window.
-	setSize(this.winWidth, this.winHeight);
+	// setSize(this.winWidth, this.winHeight);
 
 	// Sometimes setSize() just fails. Go figure.
-	setPreferredSize(new Dimension(this.winWidth, this.winHeight));
+	// setPreferredSize(new Dimension(this.winWidth, this.winHeight));
 
 	// This is a pointer to this JPanel used in the Event Dispatch Thread
 	// (EDT).
@@ -231,7 +256,7 @@ public class Bleach extends JPanel {
 		    Bleach.this.jWindow = new JFrame(EDTwindowTitle);
 		    Bleach.this.jWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		    Bleach.this.jWindow.setResizable(false);
-		    Bleach.this.jWindow.add(EDTpointerToPanel);
+		    Bleach.this.jWindow.add(surface);
 
 		    // Fixes a bug that sometimes adds 10 pixels to width and
 		    // height. Weird stuff.
@@ -245,13 +270,12 @@ public class Bleach extends JPanel {
 		}
 	    });
 	} catch (InvocationTargetException | InterruptedException e) {
-	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
 
-	setDoubleBuffered(true);
-	setFocusable(true);
-	setBackground(Color.cyan);
+	surface.setDoubleBuffered(true);
+	surface.setFocusable(true);
+	surface.setBackground(Color.cyan);
 
 	this.renderer = new Picasso(this.winWidth, this.winHeight);
     }
@@ -274,27 +298,6 @@ public class Bleach extends JPanel {
 	return false;
     }
 
-    @Override
-    public void paintComponent(Graphics g) {
-	double deltaTime = System.currentTimeMillis() - this.timestampCard.getLastRenderTimestamp();
-
-	if (this.FPS > 0 && deltaTime < 1000.0 / this.FPS)
-	    return;
-
-	double actualFPS = (1000.0 / Math.max(1, (deltaTime)));
-
-	this.timestampCard.addToDebugTimestamp(deltaTime);
-	if (this.timestampCard.getCurrentDebugTimestamp() >= 1000) {
-	    this.timestampCard.resetDebugTimestamp();
-	    this.renderer.clearDebugLines();
-	    this.renderer.addDebugLine("FPS: " + (int) actualFPS);
-	}
-
-	this.renderer.render(g, this.activeLevel);
-
-	this.timestampCard.tickLastRenderTime();
-    }
-
     public void run() {
 	gameLoop();
     }
@@ -304,6 +307,11 @@ public class Bleach extends JPanel {
 	double retval = this.FPS;
 	this.FPS = newFPS;
 	return retval;
+    }
+
+    public void setSize(int windowWidth, int windowHeight) {
+	this.winWidth = windowWidth;
+	this.winHeight = windowHeight;
     }
 
     public void setTitle(String title) {
@@ -345,6 +353,10 @@ public class Bleach extends JPanel {
 
 	}
 
+	public void addToDebugTimestamp(double incrementation) {
+	    this.timeDebug += incrementation;
+	}
+
 	public long getCurrentDebugTimestamp() {
 	    return this.timeDebug;
 	}
@@ -355,10 +367,6 @@ public class Bleach extends JPanel {
 
 	public double getLastRenderTimestamp() {
 	    return this.timePreviousRender;
-	}
-
-	public void addToDebugTimestamp(double incrementation) {
-	    this.timeDebug += incrementation;
 	}
 
 	public void resetDebugTimestamp() {
