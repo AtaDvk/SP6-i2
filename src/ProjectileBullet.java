@@ -40,7 +40,7 @@ public class ProjectileBullet extends Projectile {
 	}
 
 	for (EntityLiving entity : interactors) {
-	    if (entity != this.getOwner() && Impact.collides(this, entity)) {
+	    if (entity != this.getOwner() && Impact.checkCollision(this, entity)) {
 		entity.takeDamage(dealDamage());
 		// sound engine play sound!
 		die(); // This projectile should die now.
@@ -55,7 +55,7 @@ public class ProjectileBullet extends Projectile {
 	    terrains.add((TerrainBlock) terrain);
 	}
 	for (TerrainBlock terrain : terrains) {
-	    if (Impact.collides(this, terrain)) {
+	    if (Impact.checkCollision(this, terrain)) {
 		die();
 		System.out.println("proj death terrain");
 		break;

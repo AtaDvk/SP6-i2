@@ -12,7 +12,7 @@ public class InventoryItem extends Entity {
     @Override
     public void tick(LevelInteractable activeLevel) {
 	for (EntityTranslatable player : activeLevel.getPlayers()) {
-	    if (Impact.collides(this, player)) {
+	    if (Impact.checkCollision(this, player)) {
 		((EntityLiving) player).getInventory().addItem(this);
 		// TODO delete this from the world.
 		break;

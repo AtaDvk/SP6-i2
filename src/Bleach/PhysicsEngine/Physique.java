@@ -55,7 +55,7 @@ public class Physique {
 		    // As long as it doesn't check for a collision with
 		    // itself...
 		    if (currentEntity != otherEntity) {
-			if (Impact.collides(currentEntity, otherEntity)) {
+			if (Impact.checkCollision(currentEntity, otherEntity)) {
 
 			    // Trigger entities' onCollision-actions, if present
 			    if (((Entity) currentEntity).hasCollisionListener())

@@ -7,6 +7,13 @@ import Bleach.Entity.EntityTranslatable;
 
 public class Impact {
 
+    public static boolean checkCollision(EntityTranslatable first, EntityTranslatable second) {
+
+	if (((Entity) first).hasRectangularCollisionModel() || ((Entity) second).hasRectangularCollisionModel())
+	    return rectangularCollisionDetection(first, second);
+	return circularCollisionDetection(first, second);
+    }
+
     public static boolean circularCollisionDetection(EntityTranslatable first, EntityTranslatable second) {
 	// Closest point on collision box
 	Point2D.Double closestPoint = new Point2D.Double(0, 0);
@@ -38,12 +45,12 @@ public class Impact {
 
     public static boolean collide(EntityTranslatable first, EntityTranslatable second) {
 	if (((Entity) first).hasRectangularCollisionModel() || ((Entity) second).hasRectangularCollisionModel()) {
-	    return collideRectangular(first, second);
+	    return collideRectangles(first, second);
 	}
-	return collideCircular(first, second);
+	return collideCircles(first, second);
     }
 
-    public static boolean collideCircular(EntityTranslatable first, EntityTranslatable second) {
+    public static boolean collideCircles(EntityTranslatable first, EntityTranslatable second) {
 	Point2D.Double pos = first.getPosition();
 
 	// double distanceBeforeCollision =
@@ -60,7 +67,7 @@ public class Impact {
 	return true;
     }
 
-    public static boolean collideRectangular(EntityTranslatable first, EntityTranslatable second) {
+    public static boolean collideRectangles(EntityTranslatable first, EntityTranslatable second) {
 	/*
 	 * Handle collision with rectangles.
 	 */
@@ -94,13 +101,6 @@ public class Impact {
 
 	first.setPosition(newPos);
 	return didMove;
-    }
-
-    public static boolean collides(EntityTranslatable first, EntityTranslatable second) {
-
-	if (((Entity) first).hasRectangularCollisionModel() || ((Entity) second).hasRectangularCollisionModel())
-	    return rectangularCollisionDetection(first, second);
-	return circularCollisionDetection(first, second);
     }
 
     public static double distanceSquared(double x1, double y1, double x2, double y2) {
