@@ -23,121 +23,121 @@ import Bleach.SoundEngine.Boom;
 
 public class Game {
 
-    public static void main(String[] args) {
+	public static void main(String[] args) {
 
-	Bleach myGame = Bleach.getInstance();
+		Bleach myGame = Bleach.getInstance();
 
-	Bleach.loadImages("assets/images/assets.json");
+		Bleach.loadImages("assets/images/assets.json");
 
-	try {
-	    Bleach.loadSounds("assets/sounds/assets.json");
-	} catch (IOException e2) {
-	    e2.printStackTrace();
-	} catch (UnsupportedAudioFileException e2) {
-	    e2.printStackTrace();
-	}
+		try {
+			Bleach.loadSounds("assets/sounds/assets.json");
+		} catch (IOException e2) {
+			e2.printStackTrace();
+		} catch (UnsupportedAudioFileException e2) {
+			e2.printStackTrace();
+		}
 
-	myGame.setFPS(60);
+		myGame.setFPS(60);
 
-	myGame.setSize(800, 600);
-	myGame.setTitle("My super game!");
+		myGame.setSize(800, 600);
+		myGame.setTitle("My super game!");
 
-	Level firstLevel = new Level(2800, 1200, "Town");
+		Level firstLevel = new Level(2800, 1200, "Town");
 
-	Player player = new Player(Bleach.getSprite("mushi"), 100, 100);
-	firstLevel.addPlayer(player);
+		Player player = new Player(Bleach.getSprite("mushi"), 100, 100);
+		firstLevel.addPlayer(player);
 
-	firstLevel.levelBuilder(Bleach.loadLevel("assets/levels/level1.json"));
+		firstLevel.levelBuilder(Bleach.loadLevel("assets/levels/level1.json"));
 
-	// firstLevel.setMusicTrack("melody7");
+		// firstLevel.setMusicTrack("melody7");
 
-	myGame.addLevel(firstLevel);
+		myGame.addLevel(firstLevel);
 
-	myGame.init();
+		myGame.init();
 
-	// Adding a hot receptionist Receptionist receptionist = new
-	Receptionist receptionist = new Receptionist() {
+		// Adding a hot receptionist Receptionist receptionist = new
+		Receptionist receptionist = new Receptionist() {
 
-	    @Override
-	    public void handleEvent(ActionEvent event) {
-		// TODO
+			@Override
+			public void handleEvent(ActionEvent event) {
+				// TODO
 
-	    }
+			}
 
-	    @Override
-	    public void handleEvent(MouseEvent event) {
-		// TODO
+			@Override
+			public void handleEvent(MouseEvent event) {
+				// TODO
 
-	    }
-	};
+			}
+		};
 
-	receptionist.addKeyBinding(new KeyBinding(KeyStroke.getKeyStroke("pressed A"), "pressed A", new AbstractAction() {
+		receptionist.addKeyBinding(new KeyBinding(KeyStroke.getKeyStroke("pressed A"), "pressed A", new AbstractAction() {
 
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		player.getForce().setVectorAngle(Math.PI);
-		player.isMoving(true);
-		System.out.println("A");
-	    }
-	}));
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				player.getForce().setVectorAngle(Math.PI);
+				player.isMoving(true);
+				System.out.println("A");
+			}
+		}));
 
-	receptionist.addKeyBinding(new KeyBinding(KeyStroke.getKeyStroke("released A"), "released A", new AbstractAction() {
+		receptionist.addKeyBinding(new KeyBinding(KeyStroke.getKeyStroke("released A"), "released A", new AbstractAction() {
 
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		player.isMoving(false);
-	    }
-	}));
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				player.isMoving(false);
+			}
+		}));
 
-	receptionist.addKeyBinding(new KeyBinding(KeyStroke.getKeyStroke("pressed D"), "pressed D", new AbstractAction() {
+		receptionist.addKeyBinding(new KeyBinding(KeyStroke.getKeyStroke("pressed D"), "pressed D", new AbstractAction() {
 
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		player.getForce().setVectorAngle(0);
-		player.isMoving(true);
-	    }
-	}));
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				player.getForce().setVectorAngle(0);
+				player.isMoving(true);
+			}
+		}));
 
-	receptionist.addKeyBinding(new KeyBinding(KeyStroke.getKeyStroke("released D"), "released D", new AbstractAction() {
+		receptionist.addKeyBinding(new KeyBinding(KeyStroke.getKeyStroke("released D"), "released D", new AbstractAction() {
 
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		player.isMoving(false);
-	    }
-	}));
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				player.isMoving(false);
+			}
+		}));
 
-	receptionist.addKeyBinding(new KeyBinding(KeyStroke.getKeyStroke("shift pressed SHIFT"), "shift pressed SHIFT", new AbstractAction() {
+		receptionist.addKeyBinding(new KeyBinding(KeyStroke.getKeyStroke("shift pressed SHIFT"), "shift pressed SHIFT", new AbstractAction() {
 
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
+			@Override
+			public void actionPerformed(ActionEvent e) {
 
-		ExternalForce thrust = new ExternalForce(Math.toRadians(270), 120);
-		thrust.setOnCollision(new CollisionListener() {
+				ExternalForce thrust = new ExternalForce(Math.toRadians(270), 120);
+				thrust.setOnCollision(new CollisionListener() {
 
-		    @Override
-		    public void onCollision(Entity collidedWith) {
-			thrust.kill();
-		    }
+					@Override
+					public void onCollision(Entity collidedWith) {
+						thrust.kill();
+					}
+				});
+
+				player.startFalling();
+				player.addExternalForce(ExternalForce.ForceIdentifier.JUMP, thrust);
+
+				Boom.playSound("explosion");
+			}
+		}));
+
+		((Entity) player).setOnCollision(new CollisionListener() {
+
+			@Override
+			public void onCollision(Entity collidedWith) {
+			}
+
 		});
 
-		player.startFalling();
-		player.addExternalForce(ExternalForce.ForceIdentifier.JUMP, thrust);
+		myGame.addReceptionist(receptionist);
 
-		Boom.playSound("explosion");
-	    }
-	}));
+		myGame.run();
 
-	((Entity) player).setOnCollision(new CollisionListener() {
-
-	    @Override
-	    public void onCollision(Entity collidedWith) {
-	    }
-
-	});
-
-	myGame.addReceptionist(receptionist);
-
-	myGame.run();
-
-    }
+	}
 }
