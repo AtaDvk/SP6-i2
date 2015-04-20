@@ -40,11 +40,11 @@ public class Game {
 		myGame.setFPS(60);
 
 		myGame.setSize(800, 600);
-		myGame.setTitle("My super game!");
+		myGame.setTitle("Squidoes!");
 
 		Level firstLevel = new Level(2800, 1200, "Town");
 
-		Player player = new Player(Bleach.getSprite("mushi"), 100, 100);
+		Player player = new Player(Bleach.getSprite("player"), 34, 36);
 		firstLevel.addPlayer(player);
 
 		firstLevel.levelBuilder(Bleach.loadLevel("assets/levels/level1.json"));

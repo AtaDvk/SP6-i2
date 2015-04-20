@@ -1,5 +1,11 @@
 [
 	{
+		"key":"player",
+		"filename":"Player_Large.png",
+		"width":34,
+		"height":36
+	},
+	{
 		"key":"mushi",
 		"filename":"mushi.png",
 		"width":16,

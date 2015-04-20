@@ -5,7 +5,7 @@ import Bleach.Level.LevelInteractable;
 public class Player extends EntityLiving {
 
 	public Player(Sprite sprite, double x, double y) {
-		super(sprite, x, y, 8, // radius
+		super(sprite, x, y, 15, // radius
 		80, // health
 		1, // attack power
 		120 // speed
