@@ -4,59 +4,63 @@ import Bleach.PhysicsEngine.CollisionEngine.CollisionListener;
 
 public class ExternalForce {
 
-	private CollisionListener collisionListener = null;
+    private CollisionListener collisionListener = null;
 
-	private Force force;
-	private boolean isExhausted = false;
+    private Force force;
+    private boolean isExhausted = false;
 
-	public ExternalForce(double vectorAngle, double deltaVelocity) {
-		this.force = new Force(vectorAngle, deltaVelocity);
+    public ExternalForce(double vectorAngle, double deltaVelocity) {
+	this.force = new Force(vectorAngle, deltaVelocity);
+    }
+
+    public CollisionListener getCollisionListener() {
+	return collisionListener;
+    }
+
+    public double getMagnitude(double deltaTime) {
+	if (isExhausted)
+	    return Double.MIN_NORMAL;
+
+	double magnitude = force.getMagnitude(deltaTime);
+
+	// Added this feature
+	if (force.getVelocity() == Double.MAX_VALUE)
+	    return magnitude;
+
+	double newVelocity = force.getVelocity() - magnitude;
+
+	if (newVelocity <= Double.MIN_NORMAL) {
+	    magnitude = magnitude - newVelocity;
+	    isExhausted = true;
+	    force.setVelocity(Double.MIN_NORMAL);
 	}
 
-	public CollisionListener getCollisionListener() {
-		return collisionListener;
-	}
+	force.setVelocity(newVelocity);
 
-	public double getMagnitude(double deltaTime) {
-		if (isExhausted)
-			return Double.MIN_NORMAL;
+	return magnitude;
+    }
 
-		double magnitude = force.getMagnitude(deltaTime);
+    public double getVectorAngle() {
+	return force.getVectorAngle();
+    }
 
-		double newVelocity = force.getVelocity() - magnitude;
+    public boolean hasCollisionListener() {
+	return this.collisionListener != null ? true : false;
+    }
 
-		if (newVelocity <= Double.MIN_NORMAL) {
-			magnitude = magnitude - newVelocity;
-			isExhausted = true;
-			force.setVelocity(Double.MIN_NORMAL);
-		}
+    public boolean isExhaused() {
+	return isExhausted;
+    }
 
-		force.setVelocity(newVelocity);
+    public void kill() {
+	this.isExhausted = true;
+    }
 
-		return magnitude;
-	}
+    public void setOnCollision(CollisionListener onCollision) {
+	this.collisionListener = onCollision;
+    }
 
-	public double getVectorAngle() {
-		return force.getVectorAngle();
-	}
-
-	public boolean hasCollisionListener() {
-		return this.collisionListener != null ? true : false;
-	}
-
-	public boolean isExhaused() {
-		return isExhausted;
-	}
-
-	public void kill() {
-		this.isExhausted = true;
-	}
-
-	public void setOnCollision(CollisionListener onCollision) {
-		this.collisionListener = onCollision;
-	}
-
-	public static enum ForceIdentifier {
-		GRAVITY, JUMP, WIND;
-	}
+    public static enum ForceIdentifier {
+	GRAVITY, JUMP, WIND;
+    }
 }

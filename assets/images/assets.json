@@ -6,54 +6,26 @@
 		"height":36
 	},
 	{
-		"key":"mushi",
-		"filename":"mushi.png",
-		"width":16,
-		"height":16
+		"key":"Squidoe",
+		"filename":"Squidoe.png",
+		"width":68,
+		"height":105
 	},
 	{
-		"key":"heart",
-		"filename":"heart.png"
+		"key":"bouble",
+		"filename":"bouble.png",
+		"width":20,
+		"height":20
 	},
 	{
-		"key":"blob",
-		"filename":"blob_anim.png",
-		"width":21,
-		"height":22,
-		"frametime":200,
-		"originx":10,
-		"originy":10
+		"key":"DeepOcean",
+		"filename":"DeepOcean.png"
 	},
 	{
-		"key":"clouds",
-		"filename":"clouds.png"
-	},
-	{
-		"key":"block",
-		"filename":"block.png"
-	},
-	{
-		"key":"starrynight",
-		"filename":"uchoos_bg_768px_062611.jpg"
-	},
-	{
-		"key":"grassblock",
-		"filename":"grassblock.png"
-	},
-	{
-		"key":"grassblock_left",
-		"filename":"grassblock_left.png"
-	},
-	{
-		"key":"grassblock_right",
-		"filename":"grassblock_right.png"
-	},
-	{
-		"key":"snow",
-		"filename":"snow.png"
-	},
-	{
-		"key":"bullet",
-		"filename":"bullet.png"
+		"key":"boubles",
+		"filename":"boubles.png",
+		"width":800,
+		"height":600
 	}
+	
 ]

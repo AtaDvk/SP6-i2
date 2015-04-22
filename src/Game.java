@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.AbstractAction;
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import Bleach.Bleach;
@@ -23,121 +24,179 @@ import Bleach.SoundEngine.Boom;
 
 public class Game {
 
-	public static void main(String[] args) {
+    private EnemySpawner enemySpawner;
 
-		Bleach myGame = Bleach.getInstance();
+    private Bleach gameEngine;
+    private Player player;
+    private Level level;
+    private Receptionist inputHandler;
 
-		Bleach.loadImages("assets/images/assets.json");
+    public Game() {
+	gameEngine = Bleach.getInstance();
+	gameEngine.setFPS(60);
 
-		try {
-			Bleach.loadSounds("assets/sounds/assets.json");
-		} catch (IOException e2) {
-			e2.printStackTrace();
-		} catch (UnsupportedAudioFileException e2) {
-			e2.printStackTrace();
-		}
+	gameEngine.setSize(800, 600);
+	gameEngine.setTitle("Squidoes!");
 
-		myGame.setFPS(60);
+	loadGameData();
+	initGameObjects();
+	initGameLogics();
 
-		myGame.setSize(800, 600);
-		myGame.setTitle("Squidoes!");
+	gameEngine.run();
+    }
 
-		Level firstLevel = new Level(2800, 1200, "Town");
+    private void loadGameData() {
 
-		Player player = new Player(Bleach.getSprite("player"), 34, 36);
-		firstLevel.addPlayer(player);
+	try {
 
-		firstLevel.levelBuilder(Bleach.loadLevel("assets/levels/level1.json"));
+	    Bleach.loadImages("assets/images/assets.json");
+	    Bleach.loadSounds("assets/sounds/assets.json");
 
-		// firstLevel.setMusicTrack("melody7");
+	} catch (IOException e) {
+	    e.printStackTrace();
+	} catch (UnsupportedAudioFileException e) {
+	    e.printStackTrace();
+	}
+    }
 
-		myGame.addLevel(firstLevel);
+    private void initGameObjects() {
 
-		myGame.init();
+	player = new Player();
 
-		// Adding a hot receptionist Receptionist receptionist = new
-		Receptionist receptionist = new Receptionist() {
+	level = new Level(800, 8000, "Town");
+	level.addPlayer(player);
 
-			@Override
-			public void handleEvent(ActionEvent event) {
-				// TODO
+	level.levelBuilder(Bleach.loadLevel("assets/levels/level1.json"));
 
-			}
+	// level.setMusicTrack("melody7");
 
-			@Override
-			public void handleEvent(MouseEvent event) {
-				// TODO
+	gameEngine.addLevel(level);
 
-			}
-		};
+	this.enemySpawner = new EnemySpawner(player, level);
 
-		receptionist.addKeyBinding(new KeyBinding(KeyStroke.getKeyStroke("pressed A"), "pressed A", new AbstractAction() {
+	gameEngine.init();
+    }
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				player.getForce().setVectorAngle(Math.PI);
-				player.isMoving(true);
-				System.out.println("A");
-			}
-		}));
+    private void initGameLogics() {
+	inputHandler = new Receptionist() {
 
-		receptionist.addKeyBinding(new KeyBinding(KeyStroke.getKeyStroke("released A"), "released A", new AbstractAction() {
+	    @Override
+	    public void handleEvent(ActionEvent event) {
+	    }
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				player.isMoving(false);
-			}
-		}));
+	    @Override
+	    public void handleEvent(MouseEvent event) {
+	    }
 
-		receptionist.addKeyBinding(new KeyBinding(KeyStroke.getKeyStroke("pressed D"), "pressed D", new AbstractAction() {
+	};
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				player.getForce().setVectorAngle(0);
-				player.isMoving(true);
-			}
-		}));
+	inputHandler.addKeyBinding(new KeyBinding(KeyStroke.getKeyStroke("pressed UP"), "pressed UP", new AbstractAction() {
 
-		receptionist.addKeyBinding(new KeyBinding(KeyStroke.getKeyStroke("released D"), "released D", new AbstractAction() {
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		player.addExternalForce(null, new ExternalForce(Math.PI * 1.5, 50));
+	    }
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				player.isMoving(false);
-			}
-		}));
+	}));
 
-		receptionist.addKeyBinding(new KeyBinding(KeyStroke.getKeyStroke("shift pressed SHIFT"), "shift pressed SHIFT", new AbstractAction() {
+	inputHandler.addKeyBinding(new KeyBinding(KeyStroke.getKeyStroke("released UP"), "released UP", new AbstractAction() {
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+	    }
 
-				ExternalForce thrust = new ExternalForce(Math.toRadians(270), 120);
-				thrust.setOnCollision(new CollisionListener() {
+	}));
 
-					@Override
-					public void onCollision(Entity collidedWith) {
-						thrust.kill();
-					}
-				});
+	inputHandler.addKeyBinding(new KeyBinding(KeyStroke.getKeyStroke("pressed LEFT"), "pressed LEFT", new AbstractAction() {
 
-				player.startFalling();
-				player.addExternalForce(ExternalForce.ForceIdentifier.JUMP, thrust);
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		player.addExternalForce(null, new ExternalForce(Math.PI, 50));
+	    }
 
-				Boom.playSound("explosion");
-			}
-		}));
+	}));
 
-		((Entity) player).setOnCollision(new CollisionListener() {
+	inputHandler.addKeyBinding(new KeyBinding(KeyStroke.getKeyStroke("released LEFT"), "released LEFT", new AbstractAction() {
 
-			@Override
-			public void onCollision(Entity collidedWith) {
-			}
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+	    }
 
+	}));
+
+	inputHandler.addKeyBinding(new KeyBinding(KeyStroke.getKeyStroke("pressed DOWN"), "pressed DOWN", new AbstractAction() {
+
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		player.addExternalForce(null, new ExternalForce(Math.PI * 0.5, 50));
+	    }
+
+	}));
+
+	inputHandler.addKeyBinding(new KeyBinding(KeyStroke.getKeyStroke("released DOWN"), "released DOWN", new AbstractAction() {
+
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+	    }
+
+	}));
+
+	inputHandler.addKeyBinding(new KeyBinding(KeyStroke.getKeyStroke("pressed RIGHT"), "pressed RIGHT", new AbstractAction() {
+
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		player.addExternalForce(null, new ExternalForce(0, 50));
+	    }
+
+	}));
+
+	inputHandler.addKeyBinding(new KeyBinding(KeyStroke.getKeyStroke("released RIGHT"), "released RIGHT", new AbstractAction() {
+
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+	    }
+
+	}));
+
+	inputHandler.addKeyBinding(new KeyBinding(KeyStroke.getKeyStroke("shift pressed SHIFT"), "shift pressed SHIFT", new AbstractAction() {
+
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+
+		ExternalForce thrust = new ExternalForce(Math.toRadians(270), 120);
+		thrust.setOnCollision(new CollisionListener() {
+
+		    @Override
+		    public void onCollision(Entity collidedWith) {
+			thrust.kill();
+		    }
 		});
 
-		myGame.addReceptionist(receptionist);
+		player.startFalling();
+		player.addExternalForce(ExternalForce.ForceIdentifier.JUMP, thrust);
 
-		myGame.run();
+		Boom.playSound("explosion");
+	    }
 
-	}
+	}));
+
+	((Entity) player).setOnCollision(new CollisionListener() {
+
+	    @Override
+	    public void onCollision(Entity collidedWith) {
+
+		JOptionPane.showMessageDialog(gameEngine.getWindowFrame().getContentPane(), "GAME OVER!", "You got eaten by a squid!\nWah-Wah-Waaah", JOptionPane.OK_OPTION);
+		System.exit(0);
+
+	    }
+	});
+
+	gameEngine.addReceptionist(inputHandler);
+    }
+
+    public static void main(String[] args) {
+
+	new Game();
+
+    }
 }
