@@ -185,6 +185,8 @@ public class Game {
 			@Override
 			public void onCollision(Entity collidedWith) {
 
+				Boom.playSound("drop");
+
 				JOptionPane.showMessageDialog(gameEngine.getWindowFrame().getContentPane(), "You got eaten by a squid!\nWah-Wah-Waaah", "GAME OVER!", JOptionPane.OK_OPTION);
 				System.exit(0);
 

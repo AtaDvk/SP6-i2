@@ -6,57 +6,54 @@ import java.util.concurrent.atomic.AtomicInteger;
 import Bleach.Level.Level;
 
 public class EnemySpawner implements Runnable {
-    private AtomicInteger numberOfSquidsAlive = new AtomicInteger(0);
-    private Random rand = new Random();
-    private ExecutorService squidAI = Executors.newFixedThreadPool(10);
-    private Player player;
-    private Level level;
+	private AtomicInteger numberOfSquidsAlive = new AtomicInteger(0);
+	private Random rand = new Random();
+	private ExecutorService squidAI = Executors.newFixedThreadPool(4);
+	private Player player;
+	private Level level;
 
-    public EnemySpawner(Player player, Level level) {
-	this.player = player;
-	this.level = level;
-	squidAI.execute(this);
-    }
-
-    @Override
-    public void run() {
-
-	while (true) {
-
-	    if (rand.nextDouble() > 0.25)
-		try {
-		    int sleepTime = rand.nextInt(10000) + 100;
-		    System.out.println("Sleeping for " + sleepTime / 1000 + " seconds...");
-		    Thread.sleep(sleepTime);
-		} catch (InterruptedException e) {
-		    e.printStackTrace();
-		}
-	    else if (numberOfSquidsAlive.get() < 9)
-		spawnSquidoe();
+	public EnemySpawner(Player player, Level level) {
+		this.player = player;
+		this.level = level;
+		squidAI.execute(this);
 	}
 
-    }
+	@Override
+	public void run() {
 
-    public void spawnSquidoe() {
-	numberOfSquidsAlive.incrementAndGet();
+		while (true) {
 
-	double randomX = player.getPosition().getX() - rand.nextInt(500) - 100;
-	double randomY = player.getPosition().getY() - rand.nextInt(500) - 100;
+			if (rand.nextDouble() > 0.20)
+				try {
+					int sleepTime = rand.nextInt(10000) + 1000;
+					Thread.sleep(sleepTime);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			else if (numberOfSquidsAlive.get() < 3)
+				spawnSquidoe();
+		}
 
-	Squidoe squid = new Squidoe(randomX, randomY);
-	level.addMobile(squid);
+	}
 
-	squidAI.execute(new Runnable() {
+	public void spawnSquidoe() {
+		numberOfSquidsAlive.incrementAndGet();
 
-	    @Override
-	    public void run() {
+		double randomX = player.getPosition().getX() - rand.nextInt(500) - 100;
+		double randomY = player.getPosition().getY() - rand.nextInt(500) - 100;
 
-		while (true)
-		    squid.AI(level);
-	    }
-	});
+		Squidoe squid = new Squidoe(randomX, randomY);
+		level.addMobile(squid);
 
-	System.out.println("Squid Spawned!");
-    }
+		squidAI.execute(new Runnable() {
+
+			@Override
+			public void run() {
+
+				while (true)
+					squid.AI(level);
+			}
+		});
+	}
 
 }
