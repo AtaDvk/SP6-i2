@@ -2,6 +2,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 
+import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
@@ -12,6 +13,7 @@ import Bleach.Entity.Entity;
 import Bleach.InputManager.Receptionist;
 import Bleach.InputManager.Receptionist.KeyBinding;
 import Bleach.Level.Level;
+import Bleach.Loader.Discette;
 import Bleach.PhysicsEngine.CollisionEngine.CollisionListener;
 import Bleach.PhysicsEngine.Force.ExternalForce;
 import Bleach.SoundEngine.Boom;
@@ -32,17 +34,22 @@ public class Game {
 	private Receptionist inputHandler;
 
 	public Game() {
-		gameEngine = Bleach.getInstance();
-		gameEngine.setFPS(60);
 
-		gameEngine.setSize(800, 600);
-		gameEngine.setTitle("Squidoes!");
+		try {
+			gameEngine = Bleach.getInstance();
 
-		loadGameData();
-		initGameObjects();
-		initGameLogics();
+			gameEngine.setFPS(60);
+			gameEngine.setSize(800, 600);
+			gameEngine.setTitle("Squidoes!");
 
-		gameEngine.run();
+			loadGameData();
+			initGameObjects();
+			initGameLogics();
+
+			gameEngine.run();
+		} catch (LineUnavailableException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void loadGameData() {
@@ -59,7 +66,7 @@ public class Game {
 		}
 	}
 
-	private void initGameObjects() {
+	private void initGameObjects() throws LineUnavailableException {
 
 		player = new Player();
 
@@ -69,7 +76,7 @@ public class Game {
 		level.levelBuilder(Bleach.loadLevel("assets/levels/level1.json"));
 
 		// level.setMusicTrack("melody7");
-
+		Boom.setAmbientSoundtrack(Discette.getSound("bubbles"));
 		gameEngine.addLevel(level);
 
 		this.enemySpawner = new EnemySpawner(player, level);

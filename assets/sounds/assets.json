@@ -4,6 +4,10 @@
 		"filename":"Windows_Shutdown.wav"
 	},
 	{
+		"key":"bubbles",
+		"filename":"Fishtank.wav"
+	},
+	{
 		"key":"drop",
 		"filename":"drop.wav"
 	},
